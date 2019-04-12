@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  vim-python:
+    build: .
+    # volumes: 
+    #   - d:\:/data/project/
+    privileged: true
+
+
+
+
+
+
+
