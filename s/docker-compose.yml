@@ -1,7 +1,22 @@
 version: "3"
 services:
-  ss:
-    image: ss:v1
-    restart: always
+  ss: 
+    image: ss:v1                       
+    restart: always                
+    networks:
+      - overlay
+    volumes:
+      - ./log/:/var/log/
+                                                                                                          
+  h1:
+    image: haproxy
     ports:
-      - 19012:19012
+      - 24000-24050:24000-24050
+      - 1115:1115           
+    volumes:                
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    networks:
+      - overlay             
+  
+networks: 
+  overlay:
