@@ -1,0 +1,28 @@
+version: "3"
+services:
+  ss: 
+    image: sslocal:v1                       
+    networks:
+      - overlay
+    volumes:
+      - ./log/:/var/log/
+    ports:
+      - 1083:1083
+    deploy:
+      mode: replicated
+      replicas: 3
+                                                                                                          
+  h1:
+    image: haproxy
+    ports:
+      - 25502:25502
+      - 1115:1115  
+    volumes:                
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    depends_on:
+      - ss
+    networks:
+      - overlay             
+  
+networks: 
+  overlay:
