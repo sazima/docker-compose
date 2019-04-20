@@ -7,9 +7,6 @@ services:
     volumes:
       - /var/log/:/var/log/
       - ./client/config.json:/app/config.json
-    ports:
-      - 1083:1083
-      - 1082:1082
 
                                                                                                           
   h1:
