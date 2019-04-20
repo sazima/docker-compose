@@ -1,0 +1,22 @@
+[
+  {
+    "server": "ip",
+    "local_address": "0.0.0.0",
+    "local_port": "1085",
+    "server_port": "2400",
+    "password": "i0aG!",
+    "method": "aes-256-cfb",
+    "protocol": "origin",
+    "obfs": "plain"
+  },
+  {
+    "server": "ip",
+    "local_address": "0.0.0.0",
+    "local_port": "1084",
+    "server_port": "2401",
+    "password": "i0aGllll",
+    "method": "aes-256-cfb",
+    "protocol": "origin",
+    "obfs": "plain"
+  }
+]

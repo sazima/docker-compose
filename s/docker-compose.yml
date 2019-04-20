@@ -6,8 +6,8 @@ services:
     networks:
       - overlay
     volumes:
-      - ./log/:/var/log/
-                                                                                                          
+      - /var/log/:/var/log/
+
   h1:
     image: haproxy
     ports:

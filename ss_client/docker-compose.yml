@@ -5,20 +5,21 @@ services:
     networks:
       - overlay
     volumes:
-      - ./log/:/var/log/
+      - /var/log/:/var/log/
+      - ./client/config.json:/app/config.json
     ports:
       - 1083:1083
-    deploy:
-      mode: replicated
-      replicas: 3
+      - 1082:1082
+
                                                                                                           
   h1:
-    image: haproxy
+    image: haproxy:v1
     ports:
       - 25502:25502
       - 1115:1115  
     volumes:                
-      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+      - ./haproxy/curl_get.sh:/app/curl_get.sh
     depends_on:
       - ss
     networks:

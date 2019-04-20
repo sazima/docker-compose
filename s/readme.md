@@ -2,8 +2,8 @@
 
 2. run
 ```
-docker build -t ss:v1 .
-docker stack deploy -c docker-compose.yml ss
+docker-compose up 
 ```
+or use `docker stack deploy`
 
 3. enjoy
