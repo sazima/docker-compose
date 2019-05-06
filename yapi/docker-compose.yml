@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  mongodb: 
+  mongodb:
     image: mongo
     volumes:
       - mongo_data_yapi:/data/db
@@ -9,10 +9,10 @@ services:
     networks:
       - yapi
 
-  yapi: 
+  yapi:
     build: .
     ports:
-      - 30000:30000
+      - 30000:3000
     volumes:
       - ./config.json:/config.json
     depends_on:
@@ -24,5 +24,5 @@ services:
 volumes:
   mongo_data_yapi:
 
-networks: 
+networks:
   yapi:
