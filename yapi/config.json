@@ -5,7 +5,7 @@
     "servername": "mongodb",
     "DATABASE": "yapi",
     "port": 27017,
-    "authSource": ""
+    "authSource": "sazima"
   },
   "mail": {
     "enable": true,
