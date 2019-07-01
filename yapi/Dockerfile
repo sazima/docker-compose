@@ -93,10 +93,10 @@ RUN set -ex \
 	&& rm -rf /usr/src/python \
 	\
 	&& python2 --version
- 
+
 
 WORKDIR /vendors
 COPY docker-entrypoint.sh .
 RUN npm install --production --registry https://registry.npm.taobao.org
-EXPOSE 30000
+EXPOSE 3000
 ENTRYPOINT ["node", "server/app.js"]
