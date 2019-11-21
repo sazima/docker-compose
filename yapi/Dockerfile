@@ -1,102 +1,14 @@
 FROM node:alpine
-
-# ensure local python is preferred over distribution python
-ENV PATH /usr/local/bin:$PATH
-
-# http://bugs.python.org/issue19846
-# > At the moment, setting "LANG=C" on a Linux system *fundamentally breaks Python 3*, and that's not OK.
-ENV LANG C.UTF-8
-# https://github.com/docker-library/python/issues/147
-ENV PYTHONIOENCODING UTF-8
-
-# install ca-certificates so that HTTPS works consistently
-# other runtime dependencies for Python are installed later
-RUN apk add --no-cache ca-certificates
-
-ENV GPG_KEY C01E1CAD5EA2C4F0B8E3571504C367C218ADD4FF
-ENV PYTHON_VERSION 2.7.16
-
-RUN set -ex \
-	&& apk add --no-cache --virtual .fetch-deps \
-		gnupg \
-		tar \
-		xz \
-		git \
-	&& wget -O python.tar.xz "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz" \
-	&& wget -O python.tar.xz.asc "https://www.python.org/ftp/python/${PYTHON_VERSION%%[a-z]*}/Python-$PYTHON_VERSION.tar.xz.asc" \
-	&& git clone --depth=1 https://github.com/YMFE/yapi.git /vendors  \
-	&& export GNUPGHOME="$(mktemp -d)" \
-	&& gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$GPG_KEY" \
-	&& gpg --batch --verify python.tar.xz.asc python.tar.xz \
-	&& { command -v gpgconf > /dev/null && gpgconf --kill all || :; } \
-	&& rm -rf "$GNUPGHOME" python.tar.xz.asc \
-	&& mkdir -p /usr/src/python \
-	&& tar -xJC /usr/src/python --strip-components=1 -f python.tar.xz \
-	&& rm python.tar.xz \
-	# use taobao mirror in China
-	&& npm install --production --registry https://registry.npm.taobao.org \
-	# && rm -rf /vendors \
-	\
-	&& apk add --no-cache --virtual .build-deps  \
-		bzip2-dev \
-		coreutils \
-		dpkg-dev dpkg \
-		expat-dev \
-		findutils \
-		gcc \
-		gdbm-dev \
-		libc-dev \
-		libffi-dev \
-		libnsl-dev \
-		libtirpc-dev \
-		linux-headers \
-		make \
-		ncurses-dev \
-		libressl-dev \
-		pax-utils \
-		readline-dev \
-		sqlite-dev \
-		tcl-dev \
-		tk \
-		tk-dev \
-		zlib-dev \
-# add build deps before removing fetch deps in case there's overlap
-	&& apk del .fetch-deps \
-	\
-	&& cd /usr/src/python \
-	&& gnuArch="$(dpkg-architecture --query DEB_BUILD_GNU_TYPE)" \
-	&& ./configure \
-		--build="$gnuArch" \
-		--enable-shared \
-		--enable-unicode=ucs4 \
-		--with-system-expat \
-		--with-system-ffi \
-	&& make -j "$(nproc)" \
-# set thread stack size to 1MB so we don't segfault before we hit sys.getrecursionlimit()
-# https://github.com/alpinelinux/aports/commit/2026e1259422d4e0cf92391ca2d3844356c649d0
-		EXTRA_CFLAGS="-DTHREAD_STACK_SIZE=0x100000" \
-	&& make install \
-	\
-	&& find /usr/local -type f -executable -not \( -name '*tkinter*' \) -exec scanelf --needed --nobanner --format '%n#p' '{}' ';' \
-		| tr ',' '\n' \
-		| sort -u \
-		| awk 'system("[ -e /usr/local/lib/" $1 " ]") == 0 { next } { print "so:" $1 }' \
-		| xargs -rt apk add --no-cache --virtual .python-rundeps \
-	&& apk del .build-deps \
-	\
-	&& find /usr/local -depth \
-		\( \
-			\( -type d -a \( -name test -o -name tests \) \) \
-			-o \
-			\( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \
-		\) -exec rm -rf '{}' + \
-	&& rm -rf /usr/src/python \
-	\
-	&& python2 --version
-
-
-WORKDIR /vendors
-COPY docker-entrypoint.sh .
-RUN npm install --production --registry https://registry.npm.taobao.org
 EXPOSE 3000
+
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
+    && apk add --no-cache --virtual .fetch-deps \
+        g++ \
+        git \
+        make \
+        python \
+    && git clone --depth=1 https://gitee.com/mirrors/YApi.git /vendors \
+    && cd /vendors && npm install --production --registry https://registry.npm.taobao.org \
+    && apk del .fetch-deps
+WORKDIR /vendors
 ENTRYPOINT ["node", "server/app.js"]
