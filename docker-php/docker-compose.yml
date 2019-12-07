@@ -10,6 +10,8 @@ services:
       - db
     depends_on:
       - db
+    volumes:
+      - ./www:/srv/www
 
 
   db:
@@ -17,5 +19,6 @@ services:
     environment:
       MYSQL_DATABASE: video
       MYSQL_ROOT_PASSWORD: 123
+
     volumes:
       - ./mysql:/var/lib/mysql
