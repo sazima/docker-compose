@@ -2,8 +2,8 @@ version: '3'
 services:
 
   web:
-    # image: "zsnmwy/tieba-cloud-sign"
-    build: .
+    #  build: .
+    image: webhippie/php-caddy
     ports:
       - "18880:8080"
     links:
