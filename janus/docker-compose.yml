@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  janus:
+    image: wktadmin/janus-webrtc-gateway-docker
+    network_mode: host
+
+    # volumes:
+      # - './janus.plugin.videoroom.jcfg:/usr/local/etc/janus/janus.plugin.videoroom.jcfg'
+      # - './janus.plugin.recordplay.jcfg:/usr/local/etc/janus/janus.plugin.recordplay.jcfg'
+
+    command: bash -c " nginx && janus --debug-level=5 "
+
