@@ -1,20 +1,16 @@
-version: "3.2"
-services:
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    container_name: 'rabbitmq'
-    ports:
-      - 5672:5672
-      - 15672:15672
-    environment:
-        - RABBITMQ_DEFAULT_USER=root
-        - RABBITMQ_DEFAULT_PASS=123123
-    volumes:
-      - ./data/:/var/lib/rabbitmq/
-      - ./log/:/var/log/rabbitmq
-    networks:
-      - rabbitmq_go_net
+version: '3'
 
-networks:
-  rabbitmq_go_net:
-    driver: bridge
+services:
+  rabbit:
+    image: rabbitmq:3.8-management
+    hostname: rabbit
+    container_name: "wycs_rabbitmq3.8"
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=123123
+    volumes:
+      - ./data:/var/lib/rabbitmq
